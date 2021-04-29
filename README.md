@@ -10,8 +10,9 @@ Each iteration (at most) 1 block is changed. The convolution function has activa
 The kernel itself is `varianceScaling`, which indicates the expected deviation of a random variable from the mean value of the kernel size.
 
 After the image kernel is applied, max pooling is applied (`maxPooling2d`). This acts as a type of downsampling, using the maximum value of an area instead of the average.
-This results in a chunk such as the one below returns `10` (max) instead of `4.25` (`3+10+5-1 -> 17`, `17/4 -> 4,25`)
-![maxpool2d](https://user-images.githubusercontent.com/10957963/116555050-3804dd80-a8fc-11eb-915a-2ee5bfa03665.png)
+This results in a chunk such as the one below returns `10` (max) instead of `4.25` (`3+10+5-1 -> 17`, `17/4 -> 4,25`)  
+
+![maxpool2d](https://user-images.githubusercontent.com/41061518/116557001-566bd880-a8fe-11eb-9df4-4ab33fa4300f.png)
 
 The convolution and max pooling is then applied again, but with a filter count of 16. 
 After this the output is flattened into a 1D vector (from a 2D layered vector). Turning e.g. `[[0,2], [1,3]]` into `[0,2,1,3]`.
