@@ -4,6 +4,11 @@
 This solution trains a TensorFlow model to correctly identify handwritten digits. 
 This uses a JavaScript solution using Keras and Tensorflow, using the MNIST dataset of handwritten digits.
 
+#### Input
+Datasets are provided by the MNIST database. A sample of this dataset can be seen below.  
+
+![mnist](https://www.researchgate.net/profile/Steven-Young-5/publication/306056875/figure/fig1/AS:393921575309346@1470929630835/Example-images-from-the-MNIST-dataset.png)
+
 #### Model
 The network contains convolution functions, each shifting bits in the image based one its brightness. This function applies image kernels to the image in 5x5 blocks (pixels) with 8 filters. 
 Each iteration (at most) 1 block is changed. The convolution function has activation `relu`, which returns the original value if it is positive, or zero. 
