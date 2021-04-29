@@ -26,11 +26,11 @@ Softmax gets the maximum value by using the exponent of the value divided by the
 
 Finally the model is compiled using a standard training compiler (`Adam`), with categorical cross-entropy loss and accuracy metrics.
 
-Sources:
-[Powell, V. (Image Kernels)](https://setosa.io/ev/image-kernels/)
-[Computer Science Wiki (Max-pooling / Pooling)](https://computersciencewiki.org/index.php/Max-pooling_/_Pooling)
-[Versloot, C. (How does the Softmax activation function work?)](https://www.machinecurve.com/index.php/2020/01/08/how-does-the-softmax-activation-function-work/#how-does-softmax-work)
-[Gombru, R. (Understanding Categorical Cross-Entropy Loss (...)](https://gombru.github.io/2018/05/23/cross_entropy_loss/)
+_Sources_
+- [Powell, V. (Image Kernels)](https://setosa.io/ev/image-kernels/)
+- [Computer Science Wiki (Max-pooling / Pooling)](https://computersciencewiki.org/index.php/Max-pooling_/_Pooling)
+- [Versloot, C. (How does the Softmax activation function work?)](https://www.machinecurve.com/index.php/2020/01/08/how-does-the-softmax-activation-function-work/#how-does-softmax-work)
+- [Gombru, R. (Understanding Categorical Cross-Entropy Loss (...)](https://gombru.github.io/2018/05/23/cross_entropy_loss/)
 
 #### Parameters
 _There are a total of 65.000 dataset elements, of which 55.000 can be used as training elements (from MNIST)._
