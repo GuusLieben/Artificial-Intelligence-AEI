@@ -49,3 +49,40 @@ More epochs can be used, though after ~200 the accuracy is typically already 1.0
 
 **Accuracy**
 ![accuracy_confusion_200e](https://user-images.githubusercontent.com/10957963/116553936-f0318680-a8fa-11eb-8ab3-76fff77203ae.png)
+
+#### Alternative ([source](https://github.com/LiebenGuus/Artificial-Intelligence-AEI/blob/master/digits-java/src/main/java/DigitRecognition.java))
+This same model has been implemented in Java, using [Deep Learning for Java (DL4J)](https://deeplearning4j.org/). 
+This implementation has a lower weight decay, and takes longer to train. However the accuracy of results is noticeably better, as can be seen in the results below.
+##### Confusion Matrix
+```bash
+    0    1    2    3    4    5    6    7    8    9
+---------------------------------------------------
+  972    0    1    0    0    1    2    1    3    0 | 0 = 0
+    0 1123    2    1    0    0    2    0    7    0 | 1 = 1
+    3    2 1005    6    2    1    2    6    5    0 | 2 = 2
+    1    1    3  985    0    7    0    5    6    2 | 3 = 3
+    1    0    3    0  958    0    5    2    2   11 | 4 = 4
+    4    2    1   13    0  862    7    1    2    0 | 5 = 5
+    8    3    1    0    6    5  933    0    2    0 | 6 = 6
+    1    6   22    3    0    0    0  987    3    6 | 7 = 7
+    7    0    2    6    3    2    6    4  938    6 | 8 = 8
+    4    8    0    7   12    6    1    5    2  964 | 9 = 9
+```
+
+##### Accuracy 
+```bash
+Label               AUC         # Pos     # Neg
+0                   0.9998      980       9020
+1                   0.9998      1135      8865
+2                   0.9995      1032      8968
+3                   0.9989      1010      8990
+4                   0.9996      982       9018
+5                   0.9994      892       9108
+6                   0.9995      958       9042
+7                   0.9986      1028      8972
+8                   0.9988      974       9026
+9                   0.9987      1009      8991
+```
+```bash
+Average AUC: 0.9993
+```
