@@ -1,6 +1,8 @@
 package nl.guuslieben.sudoku;
 
 import java.util.Scanner;
+
+import nl.guuslieben.sudoku.killer.Killer;
 import nl.guuslieben.sudoku.regular.Sudoku;
 
 public class SudokuMain {
@@ -22,6 +24,17 @@ public class SudokuMain {
     }
 
     private static void useKiller(SudokuPrinter<AbstractSuduko<?>> printer, Scanner scan) {
+        try {
+            Killer killer = Killer.create(file);
+            printUsage();
+            printer.setTarget(killer);
+            gui(killer, printer, scan);
+        }
+        catch (Exception e) {
+            System.err.println("Error creating Sudoku");
+            e.printStackTrace(System.err);
+            System.exit(0);
+        }
     }
 
     private static void useRegular(SudokuPrinter<AbstractSuduko<?>> printer, Scanner scan) {
