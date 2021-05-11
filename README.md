@@ -50,7 +50,7 @@ More epochs can be used, though after ~200 the accuracy is typically already 1.0
 **Accuracy**
 ![accuracy_confusion_200e](https://user-images.githubusercontent.com/10957963/116553936-f0318680-a8fa-11eb-8ab3-76fff77203ae.png)
 
-#### Alternative ([source](https://github.com/LiebenGuus/Artificial-Intelligence-AEI/blob/master/digits-java/src/main/java/DigitRecognition.java))
+#### Alternative ([source](https://github.com/LiebenGuus/Artificial-Intelligence-AEI/blob/master/digits-java/src/main/java/nl/guuslieben/digits/DigitRecognition.java))
 This same model has been implemented in Java, using [Deep Learning for Java (DL4J)](https://deeplearning4j.org/). 
 This implementation has a lower weight decay, and takes longer to train. However the accuracy of results is noticeably better, as can be seen in the results below.
 ##### Confusion Matrix
@@ -85,4 +85,67 @@ Label               AUC         # Pos     # Neg
 ```
 ```bash
 Average AUC: 0.9993
+```
+
+### Killer Sudoku Solver ([source](https://github.com/LiebenGuus/Artificial-Intelligence-AEI/blob/master/Sudoku/src/main/java/nl/guuslieben/sudoku/SudokuMain.java))
+A killer sudoku is a variant of the classical sudoku. Its main difference lays in the fact that in a killer sudoku no squares are filled with numbers beforehand.
+Instead some areas are indicated with additional numbers which represent the sum of the squared involved. A more in-depth description can be found [here](https://en.wikipedia.org/wiki/Killer_sudoku).  
+
+An example of a killer sudoku is the following:
+![example_sudoku](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Killersudoku_color.svg/1024px-Killersudoku_color.svg.png)
+
+This can be solved as:
+![solution_sudoku](https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Killersudoku_color_solution.svg/1024px-Killersudoku_color_solution.svg.png)
+
+The solution provided in this repository uses backtracking to validate all options until a match is found. If no match is found, the solver first tries other combinations.
+For the example above, this results in the solution below, which matches the expected solution above.
+```bash
+Solved: true (took 450ms)
+
+ ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ 
+ ║ 2 │ 1 │ 5 ║ 6 │ 4 │ 7 ║ 3 │ 9 │ 8 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 3 │ 6 │ 8 ║ 9 │ 5 │ 2 ║ 1 │ 7 │ 4 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 7 │ 9 │ 4 ║ 3 │ 8 │ 1 ║ 6 │ 5 │ 2 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 5 │ 8 │ 6 ║ 2 │ 7 │ 4 ║ 9 │ 3 │ 1 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 1 │ 4 │ 2 ║ 5 │ 9 │ 3 ║ 8 │ 6 │ 7 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 9 │ 7 │ 3 ║ 8 │ 1 │ 6 ║ 4 │ 2 │ 5 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 8 │ 2 │ 1 ║ 7 │ 3 │ 9 ║ 5 │ 4 │ 6 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 6 │ 5 │ 9 ║ 4 │ 2 │ 8 ║ 7 │ 1 │ 3 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 4 │ 3 │ 7 ║ 1 │ 6 │ 5 ║ 2 │ 8 │ 9 ║ 
+ ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ 
+```
+
+#### Defining the cells
+The solution does not use any type of image recognition, and instead expects a file to contain the values of the input sudoku. Using the example above, a board could look like the following. 
+Each group is indicated using a character, where any character but `=` is allowed.
+```bash
+a,a,b,b,b,c,d,e,f
+g,g,h,h,c,c,d,e,f
+g,g,i,i,c,j,k,k,f
+l,m,m,i,n,j,k,o,f
+l,q,q,r,n,j,o,o,p
+s,q,v,r,n,t,u,u,p
+s,v,v,r,w,t,t,y,y
+s,z,@,w,w,x,x,y,y
+s,z,@,w,_,_,_,#,#
+```
+Here each character indicates a specific group (cage). However each cage should also have the value indicated, which is done by using simple properties below the board definition, for example:
+```bash
+a=3
+b=15
+c=22
+d=4
+e=16
+f=15
+g=25
+h=17
+...
 ```
