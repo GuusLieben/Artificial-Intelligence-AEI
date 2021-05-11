@@ -1,3 +1,5 @@
+package nl.guuslieben.digits;
+
 import org.deeplearning4j.datasets.iterator.impl.EmnistDataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.EmnistDataSetIterator.Set;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
@@ -17,6 +19,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.IOException;
 
+@SuppressWarnings("TypeMayBeWeakened")
 public class DigitRecognition {
 
     private static final int OUTPUT = 10;
