@@ -29,7 +29,7 @@ import nl.guuslieben.sudoku.regular.Cell;
  *  ║ 6 │ 4 │ 5 ║ 7 │ 1 │ 3 ║ 2 │ 9 │ 8 ║ 
  *  ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ 
  *  </pre>
- * @author Matt
+ * @author Matt, modified by Guus Lieben
  *
  */
 public class SudokuPrinter <T extends AbstractSudoku<? extends AbstractCell>> {
