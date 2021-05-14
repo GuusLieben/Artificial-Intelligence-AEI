@@ -1,9 +1,9 @@
 package nl.guuslieben.sudoku;
 
-import nl.guuslieben.sudoku.regular.Cell;
-
 import java.io.IOException;
 import java.util.List;
+
+import nl.guuslieben.sudoku.regular.Cell;
 
 /**
  * Print sudoku to output using Unicode8 characters to represent board, board will 
@@ -32,75 +32,59 @@ import java.util.List;
  * @author Matt
  *
  */
-public class SudokuPrinter <T extends AbstractSuduko<? extends AbstractCell>> {
+public class SudokuPrinter <T extends AbstractSudoku<? extends AbstractCell>> {
 
     T target;
-    /**
-     * Print statistics about the sudoku , the time taken to complete and
-     * combonations tried to complete
-     * 
-     * @param out
-     *            Output stream
-     */
-    public void printStatistics(Appendable out) {
-    }
 
-    /**
-     * Print representation of this Suduko puzzle to Appendable output a each
-     * block will be separated by double line, otherwise cells will be separated
-     * by single line
-     * @throws IOException 
-     * 
-     */
     public void print(Appendable out) throws IOException {
-        this.printTop(out);
-        this.printDoubleVerticleLine(out);
+        this.top(out);
+        this.doubleVertical(out);
         //noinspection unchecked
-        List<Cell> board = (List<Cell>) this.target.getBoard();
-        this.print(String.valueOf(board.get(0).getValue()), out);
+        List<Cell> board = (List<Cell>) this.target.board();
+        this.print(String.valueOf(board.get(0).value()), out);
         for (int i = 1; i < board.size(); i++) {
             // New Row
-            if (i % AbstractSuduko.getRowSize()  == 0) {
-                this.printDoubleVerticleLine(out);
+            if (i % AbstractSudoku.rowSize()  == 0) {
+                this.doubleVertical(out);
                 // Every 3rd row double line
-                if (i % (AbstractSuduko.getRowSize() * 3) == 0) {
-                    this.printDoubleHorizontalLine(out);
+                if (i % (AbstractSudoku.rowSize() * 3) == 0) {
+                    this.doubleHorizontal(out);
                 } else {
-                    this.printSingleHorizontalLine(out);
+                    this.singleHorizontal(out);
                 }
-                this.printDoubleVerticleLine(out);
+                this.doubleVertical(out);
             } else if (i % 3 == 0) {
-                this.printDoubleVerticleLine(out);
+                this.doubleVertical(out);
             } else {
-                this.printSingleVerticleLine(out);
+                this.singleVertical(out);
             }
-            this.print(String.valueOf(board.get(i).getValue()), out);
+            this.print(String.valueOf(board.get(i).value()), out);
         }
-        this.printDoubleVerticleLine(out);
-        this.printBottom(out);
+        this.doubleVertical(out);
+        this.bottom(out);
     }
 
-    private void printTop(Appendable out) throws IOException {
+    private void top(Appendable out) throws IOException {
         this.print(" ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ \n", out);
     }
 
-    private void printBottom(Appendable out) throws IOException {
+    private void bottom(Appendable out) throws IOException {
         this.print("\n ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ \n", out);
     }
 
-    private void printSingleVerticleLine(Appendable out) throws IOException {
+    private void singleVertical(Appendable out) throws IOException {
         this.print(" │ ", out);
     }
 
-    private void printDoubleVerticleLine(Appendable out) throws IOException {
+    private void doubleVertical(Appendable out) throws IOException {
         this.print(" ║ ", out);
     }
 
-    private void printDoubleHorizontalLine(Appendable out) throws IOException {
+    private void doubleHorizontal(Appendable out) throws IOException {
         this.print("\n ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ \n", out);
     }
     
-    private void printSingleHorizontalLine(Appendable out) throws IOException {
+    private void singleHorizontal(Appendable out) throws IOException {
         this.print("\n ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ \n", out);
     }
 
@@ -108,7 +92,7 @@ public class SudokuPrinter <T extends AbstractSuduko<? extends AbstractCell>> {
         out.append(value);
     }
 
-    public void setTarget(T t) {
+    public void target(T t) {
         this.target = t;
     }
 

@@ -6,47 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import nl.guuslieben.sudoku.AbstractSuduko;
+import nl.guuslieben.sudoku.AbstractSudoku;
 
-/**
- * Class to solve Sudoku puzzles by loading a puzzle form a file.
- * Ability to print Sudoku and statistics.
- * 
- * @author Matt
- *
- */
-public class Sudoku extends AbstractSuduko<Cell> {
+public class Sudoku extends AbstractSudoku<Cell> {
 
-    protected Sudoku() {
-//        board = new ArrayList<>(81);
-//        timeToSolve = -1;
-//        isComplete = false;
-//        combosTried = 0;
-    }
+    protected Sudoku() { }
 
-    /**
-     * file path to a Sudoku to solve. File must be in format of where each line
-     * has 9 0-9 digits separated by a comma. 0 means an unknown value. There
-     * should be 9 lines of 9 as per diagram below.
-     * 
-     * 
-     *   0,0,0,9,2,0,0,0,4 
-     *   0,7,0,0,0,0,8,5,0 
-     *   0,0,0,6,0,5,0,0,0 
-     *   4,0,0,8,0,0,3,0,5
-     *   5,0,0,0,0,0,0,0,1 
-     *   2,0,7,0,0,1,0,0,6 
-     *   0,0,0,4,0,8,0,0,0 
-     *   0,3,2,0,0,0,0,4,0
-     *   6,0,0,0,1,3,0,0,0
-     * 
-     * @param filepath
-     *            absolute path to file containing Sudoku
-     * @return Sudoku object representing file
-     * @throws FileNotFoundException
-     *             when the is file not found
-     */
-    public static Sudoku create(String filepath) throws FileNotFoundException {
+    public static Sudoku create(String filepath) {
         Sudoku sudoku = new Sudoku();
         sudoku.populate(filepath);
         
@@ -54,17 +20,9 @@ public class Sudoku extends AbstractSuduko<Cell> {
     }
 
     protected void populate(String filepath) {
-        /*
-         * Each 'square' has a local column, local grid and local column There
-         * are 9 columns, 9 rows and 9 grids Each square is in exactly one of
-         * each Index to column and row is maintained by X and Y coordinate of
-         * square, origin (0,0) is to top left. Local grid is indexed by
-         * (x/3)+((y/3)*3) which means index will move 1 value every 3
-         * iterations across the y or x axis ;
-         */
-        List<List<Cell>> column = new ArrayList<List<Cell>>(9);
-        List<List<Cell>> grid = new ArrayList<List<Cell>>(9);
-        List<List<Cell>> rows = new ArrayList<List<Cell>>(9);
+        List<List<Cell>> column = new ArrayList<>(9);
+        List<List<Cell>> grid = new ArrayList<>(9);
+
         Scanner scan;
         try {
             scan = new Scanner(new File(filepath));
@@ -73,76 +31,52 @@ public class Sudoku extends AbstractSuduko<Cell> {
         }
 
         for (int i = 0; i < 9; i++) {
-            column.add(new ArrayList<Cell>());
-            grid.add(new ArrayList<Cell>());
+            column.add(new ArrayList<>());
+            grid.add(new ArrayList<>());
         }
 
-        int gridIndex = 0;
-        for (int y = 0; y < 9; y++) {
-            List<Cell> currentRow = new ArrayList<Cell>();
-            rows.add(currentRow);
+        int gridIndex;
+        for (int x = 0; x < 9; x++) {
+            List<Cell> currentRow = new ArrayList<>();
             String[] nextRow = scan.nextLine().split(FILE_DELIMITER);
-            for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 9; y++) {
 
-                gridIndex = (x / 3) + ((y / 3) * 3);
-                List<Cell> currentColumn = column.get(x);
+                gridIndex = (y / 3) + ((x / 3) * 3);
+                List<Cell> currentColumn = column.get(y);
                 List<Cell> currentBlock = grid.get(gridIndex);
 
                 int value = 0;
                 try {
-                    value = Integer.parseInt(nextRow[x]);
-                } catch (NumberFormatException e) {
+                    value = Integer.parseInt(nextRow[y]);
+                } catch (NumberFormatException ignored) {
                 }
                 
                 // Create a new square to represent this location on the board
-                Cell s = new Cell(y, x, value);
+                Cell s = new Cell(x, y, value);
                 // Keep a pointer to squares local to this (row, local grid,
                 // column)
-                s.setRow(currentRow);
-                s.setColumn(currentColumn);
-                s.setBlock(currentBlock);
+                s.row(currentRow);
+                s.column(currentColumn);
+                s.block(currentBlock);
 
                 // Add square to local row, column and grid
                 currentRow.add(s);
                 currentColumn.add(s);
                 currentBlock.add(s);
 
-                board.add(s);
+                this.board.add(s);
             }
         }
 
         scan.close();
     }
 
-    /**
-     * Check if this Sudoku has been solved. A solved Sudoku has values 1..9 in
-     * each column, row and local grid only once.
-     * 
-     * @return true is this sudoku has been solved false if it has not been
-     *         solved.
-     */
-    public boolean isComplete() {
-        return board.stream().allMatch(c -> c.isValid());
+    public long timeToSolve() {
+        return this.timeToSolve;
     }
 
-    /**
-     * Milliseconds that the puzzle took to solve
-     * 
-     * @return long representation of milliseconds that the puzzle took to solve
-     *         or -1 if unsolved.
-     */
-    public long getTimeToSolve() {
-        return timeToSolve;
-    }
-
-    /**
-     * How many permutations of values were attempted when completing this
-     * Sudoku
-     * 
-     * @return int value of count of permutations or 0 if unsolved
-     */
-    public int getCombosTried() {
-        return combosTried;
+    public int attempts() {
+        return this.combosTried;
     }
 
 

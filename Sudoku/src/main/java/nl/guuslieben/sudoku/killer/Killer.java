@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import nl.guuslieben.sudoku.AbstractSuduko;
+import nl.guuslieben.sudoku.AbstractSudoku;
 
-public class Killer extends AbstractSuduko<KillerCell> {
+public class Killer extends AbstractSudoku<KillerCell> {
 
     public Killer() {
         super();
@@ -57,16 +57,16 @@ public class Killer extends AbstractSuduko<KillerCell> {
                 KillerCell s = new KillerCell(x, y, 0);
                 // Keep a pointer to squares local to this (row, local grid,
                 // column)
-                s.setRow(currentRow);
-                s.setColumn(currentColumn);
-                s.setBlock(currentBlock);
+                s.row(currentRow);
+                s.column(currentColumn);
+                s.block(currentBlock);
 
                 //Get the 'cage' this cell is in and add to list with other cells in same cage
                 String key = nextRow[y];
                 List<KillerCell> currentCage = cage.getOrDefault(key, new ArrayList<>());
                 currentCage.add(s);
                 cage.put(key, currentCage);
-                s.setCage(currentCage);
+                s.cage(currentCage);
 
                 // Add square to local row, column and grid
                 currentRow.add(s);
@@ -83,14 +83,9 @@ public class Killer extends AbstractSuduko<KillerCell> {
             values.put(splitLine[0], Integer.valueOf(splitLine[1]));
         }
 
-        cage.forEach((k, v) -> v.forEach(_v -> _v.setTotal(values.get(k))));
+        cage.forEach((k, v) -> v.forEach(_v -> _v.total(values.get(k))));
 
         scan.close();
-    }
-
-    @Override
-    public boolean isComplete() {
-        return this.board.stream().allMatch(KillerCell::isValid);
     }
     
 }

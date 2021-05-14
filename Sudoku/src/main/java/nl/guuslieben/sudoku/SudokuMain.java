@@ -14,20 +14,20 @@ public class SudokuMain {
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        SudokuPrinter<AbstractSuduko<?>> printer = new SudokuPrinter<>();
+        SudokuPrinter<AbstractSudoku<?>> printer = new SudokuPrinter<>();
 
-        if (killer) useKiller(printer, scan);
-        else useRegular(printer, scan);
+        if (killer) killer(printer, scan);
+        else regular(printer, scan);
 
         scan.close();
         System.exit(0);
     }
 
-    private static void useKiller(SudokuPrinter<AbstractSuduko<?>> printer, Scanner scan) {
+    private static void killer(SudokuPrinter<AbstractSudoku<?>> printer, Scanner scan) {
         try {
             Killer killer = Killer.create(file);
-            printUsage();
-            printer.setTarget(killer);
+            usage();
+            printer.target(killer);
             gui(killer, printer, scan);
         }
         catch (Exception e) {
@@ -37,11 +37,11 @@ public class SudokuMain {
         }
     }
 
-    private static void useRegular(SudokuPrinter<AbstractSuduko<?>> printer, Scanner scan) {
+    private static void regular(SudokuPrinter<AbstractSudoku<?>> printer, Scanner scan) {
         try {
             Sudoku sudoku = Sudoku.create(file);
-            printUsage();
-            printer.setTarget(sudoku);
+            usage();
+            printer.target(sudoku);
             gui(sudoku, printer, scan);
         }
         catch (Exception e) {
@@ -50,7 +50,7 @@ public class SudokuMain {
         }
     }
 
-    private static void printUsage() {
+    private static void usage() {
         System.out.println(
                 "s : solve Sudoku. Prints true is solved or false otherwise"
         );
@@ -58,7 +58,7 @@ public class SudokuMain {
         System.out.println("x : exit");
     }
 
-    private static void gui(AbstractSuduko<?> sudoku, SudokuPrinter<?> printer, Scanner scan) {
+    private static void gui(AbstractSudoku<?> sudoku, SudokuPrinter<?> printer, Scanner scan) {
         try {
             while (true) {
                 System.out.print("$ ");
@@ -68,7 +68,7 @@ public class SudokuMain {
                         long start = System.currentTimeMillis();
                         sudoku.solve();
                         long end = System.currentTimeMillis();
-                        System.out.println("Solved: " + sudoku.isComplete() + " (took " + (end-start) + "ms)");
+                        System.out.println("Solved: " + sudoku.complete() + " (took " + (end-start) + "ms)");
                         break;
                     case "p":
                         printer.print(System.out);

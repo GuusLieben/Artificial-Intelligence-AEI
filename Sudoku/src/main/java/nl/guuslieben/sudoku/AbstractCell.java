@@ -7,13 +7,11 @@ import java.util.List;
 import nl.guuslieben.sudoku.regular.Cell;
 
 public abstract class AbstractCell {
-    // x, y coordinate of square, 0,0 is top left
-    protected int x, y, value;
-    // Local row
+    protected final int x;
+    protected final int y;
+    protected int value;
     protected List<? extends AbstractCell> row = new ArrayList<>();
-    // Local column
     protected List<? extends AbstractCell> column = new ArrayList<>();
-    // Local grid
     protected List<? extends AbstractCell> block = new LinkedList<>();
 
     public AbstractCell(int x, int y, int value) {
@@ -22,78 +20,78 @@ public abstract class AbstractCell {
         this.value = value;
     }
 
-    public int getX() {
+    public int x() {
         return this.x;
     }
 
-    public int getY() {
+    public int y() {
         return this.y;
     }
 
-    public List<? extends AbstractCell> getGrid() {
+    public List<? extends AbstractCell> grid() {
         return this.block;
     }
 
-    public List<? extends AbstractCell> getColumn() {
+    public List<? extends AbstractCell> column() {
         return this.column;
     }
 
-    public List<? extends AbstractCell> getRow() {
+    public List<? extends AbstractCell> row() {
         return this.row;
     }
 
-    public  boolean isEmpty() {
+    public  boolean empty() {
         return this.value == 0;
     }
     
     // Some are final so we know that the value should not be changed
     public abstract boolean isFinal();
     
-    public void setRow(List<? extends AbstractCell> row) {
+    public void row(List<? extends AbstractCell> row) {
         this.row = row;
     }
 
-    public <E extends AbstractCell> void setColumn(List<E> column) {
+    public <E extends AbstractCell> void column(List<E> column) {
         this.column = column;
     }
 
-    public <E extends AbstractCell> void setBlock(List<E> grid) {
+    public <E extends AbstractCell> void block(List<E> grid) {
         this.block = grid;
     }
 
-    public int getValue() {
+    public int value() {
         return this.value;
     }
 
-    public void setValue(int value) {
+    public void value(int value) {
         this.value = value;
     }
 
     @Override
     public String toString() {
         return "Cell{" +
-                "x=" + x +
-                ", y=" + y +
-                ", value=" + value +
+                "x=" + this.x +
+                ", y=" + this.y +
+                ", value=" + this.value +
                 '}';
     }
 
-    public abstract boolean isValid();
+    public abstract boolean valid();
 
     protected boolean valid(List<? extends AbstractCell> cells) {
         return cells.stream().filter(s -> !this.equals(s))
-                .noneMatch(s -> s.getValue() == this.value);
+                .noneMatch(s -> s.value() == this.value);
     }
 
-    protected boolean isBlockValid() {
+    protected boolean validBlock() {
        return this.valid(this.block);
     }
 
-    protected boolean isColumnValid() {
+    protected boolean validColumn() {
         return this.valid(this.column);
     }
 
-    protected boolean isRowValid() {
+    protected boolean validRow() {
         return this.valid(this.row);
     }
     

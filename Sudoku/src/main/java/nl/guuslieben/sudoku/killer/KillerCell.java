@@ -5,7 +5,7 @@ import java.util.List;
 import nl.guuslieben.sudoku.AbstractCell;
 import nl.guuslieben.sudoku.regular.Cell;
 
-class KillerCell extends Cell {
+public class KillerCell extends Cell {
 
     private final Cage cage;
 
@@ -14,22 +14,22 @@ class KillerCell extends Cell {
         this.cage = new Cage();
     }
 
-    public void setTotal(int total) {
-        this.cage.setTotal(total);
+    public void total(int total) {
+        this.cage.total(total);
     }
 
-    public void setCage(List<KillerCell> cage) {
-        this.cage.setCells(cage);
+    public void cage(List<KillerCell> cage) {
+        this.cage.cells(cage);
     }
 
     @Override
-    public boolean isValid() {
-        return this.isCageValid() && super.isValid();
+    public boolean valid() {
+        return this.validCage() && super.valid();
     }
 
-    private boolean isCageValid() {
-        return this.cage.getCells().stream().anyMatch(c -> c.getValue() == 0)
-                || this.cage.getTotal() == this.cage.getCells().stream().mapToInt(AbstractCell::getValue).sum();
+    private boolean validCage() {
+        return this.cage.cells().stream().anyMatch(c -> c.value() == 0)
+                || this.cage.total() == this.cage.cells().stream().mapToInt(AbstractCell::value).sum();
     }
 
     @Override

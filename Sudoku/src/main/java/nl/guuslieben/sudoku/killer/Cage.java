@@ -12,19 +12,19 @@ public class Cage {
         this.cells = new ArrayList<>();
     }
 
-    public List<KillerCell> getCells() {
+    public List<KillerCell> cells() {
         return this.cells;
     }
 
-    public void setCells(List<KillerCell> cells) {
+    public void cells(List<KillerCell> cells) {
         this.cells = cells;
     }
 
-    public int getTotal() {
+    public int total() {
         return this.total;
     }
 
-    public void setTotal(int total) {
+    public void total(int total) {
         this.total = total;
     }
 }
