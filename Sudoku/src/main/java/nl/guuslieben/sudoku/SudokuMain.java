@@ -34,9 +34,10 @@ public class SudokuMain {
         AbstractSudoku<?> sudoku = file.getName().contains("killer")
                 ? Killer.create(file, optimised)
                 : Sudoku.create(file, optimised);
-        System.out.println("Attempting to solve " + ((optimised) ? "with" : "without") + " optimisation: " + file.getName() + " ... ");
+        System.out.print("Attempting to solve " + ((optimised) ? "with" : "without") + " optimisation: " + file.getName() + " ... ");
         sudoku.solve();
-        if (optimised) {
+        System.out.println(sudoku.complete() ? "solved" : "failed");
+        if (optimised && sudoku.complete()) {
             SudokuPrinter<AbstractSudoku<?>> printer = new SudokuPrinter<>();
             printer.target(sudoku);
             printer.print(System.out);

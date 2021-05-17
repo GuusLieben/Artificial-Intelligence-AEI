@@ -68,10 +68,10 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
     
     protected boolean solve(int index) {
         // Reached the last square on the board, check if puzzle complete
-        if (index == this.board.size()) {
+        if (index == this.board().size()) {
             return this.complete();
         }
-        E s = this.board.get(index);
+        E s = this.board().get(index);
         // Do not alter 'final' values
         if (s.isFinal()) {
             return this.solve(index + 1);
@@ -107,12 +107,22 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
         if (s.isFinal()) {
             return this.solveOptimised(index + 1);
         } else {
-            // Attempt each possible number for each square
-            for (int i : s.possibles()) {
-                if (!this.options(s).contains(i)) continue;
+            // Ensure our current value is still possible according to the cell constraints
+            List<Integer> options = this.options(s);
+            List<Integer> valid = s.possibles().stream().filter(options::contains).collect(Collectors.toList());
 
+            // Forward tracing, if the next cell can only contain 1 value we know we cannot hold that value
+            if (index < this.board().size()-1) {
+                E next = this.board().get(index + 1);
+                List<Integer> noptions = this.options(next);
+                if (noptions.size() == 1) valid.removeAll(noptions);
+            }
+
+            // Attempt each possible number for each square
+            for (int i : valid) {
                 s.value(i);
                 this.addAttempt();
+
                 // If this is a valid value move on to the next square
                 if (s.valid()) {
                     boolean done = this.solveOptimised(index + 1);
