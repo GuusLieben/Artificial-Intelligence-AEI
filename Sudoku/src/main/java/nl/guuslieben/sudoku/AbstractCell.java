@@ -13,6 +13,7 @@ public abstract class AbstractCell {
     protected List<? extends AbstractCell> row = new ArrayList<>();
     protected List<? extends AbstractCell> column = new ArrayList<>();
     protected List<? extends AbstractCell> block = new LinkedList<>();
+    protected List<Integer> possibles = new ArrayList<>();
 
     public AbstractCell(int x, int y, int value) {
         this.x = x;
@@ -111,5 +112,13 @@ public abstract class AbstractCell {
         hash = 97 * hash + this.x;
         hash = 97 * hash + this.y;
         return hash;
+    }
+
+    public void possible(int i) {
+        this.possibles.add(i);
+    }
+
+    public List<Integer> possibles() {
+        return this.possibles;
     }
 }

@@ -12,20 +12,21 @@ public class Sudoku extends AbstractSudoku<Cell> {
 
     protected Sudoku() { }
 
-    public static Sudoku create(String filepath) {
+    public static Sudoku create(File file, boolean enhanced) {
         Sudoku sudoku = new Sudoku();
-        sudoku.populate(filepath);
-        
+        sudoku.populate(file);
+        sudoku.optimised(enhanced);
+
         return sudoku;
     }
 
-    protected void populate(String filepath) {
+    protected void populate(File file) {
         List<List<Cell>> column = new ArrayList<>(9);
         List<List<Cell>> grid = new ArrayList<>(9);
 
         Scanner scan;
         try {
-            scan = new Scanner(new File(filepath));
+            scan = new Scanner(file);
         } catch (FileNotFoundException e1) {
             throw new RuntimeException(e1);
         }

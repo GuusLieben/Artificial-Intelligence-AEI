@@ -1,5 +1,6 @@
 package nl.guuslieben.sudoku;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +19,7 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
     protected long timeToSolve;
     protected int combosTried;
 
-    protected abstract void populate(String filePath);
+    protected abstract void populate(File file);
     protected boolean optimised;
 
     public boolean complete() {

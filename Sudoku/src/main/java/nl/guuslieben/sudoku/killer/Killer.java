@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import nl.guuslieben.sudoku.AbstractCell;
 import nl.guuslieben.sudoku.AbstractSudoku;
 
 public class Killer extends AbstractSudoku<KillerCell> {
@@ -16,21 +18,22 @@ public class Killer extends AbstractSudoku<KillerCell> {
         super();
     }
 
-    public static Killer create(String filepath) {
+    public static Killer create(File file, boolean enhanced) {
         Killer sudoku = new Killer();
-        sudoku.populate(filepath);
+        sudoku.populate(file);
+        sudoku.optimised(enhanced);
 
         return sudoku;
     }
     
     @Override
-    protected void populate(String filepath) {
+    protected void populate(File file) {
         List<List<KillerCell>> column = new ArrayList<>(9);
         List<List<KillerCell>> grid = new ArrayList<>(9);
 
         Scanner scan;
         try {
-            scan = new Scanner(new File(filepath));
+            scan = new Scanner(file);
         } catch (FileNotFoundException e1) {
             throw new RuntimeException(e1);
         }
@@ -87,5 +90,13 @@ public class Killer extends AbstractSudoku<KillerCell> {
 
         scan.close();
     }
-    
+
+    @Override
+    public List<Integer> options(KillerCell cell) {
+        List<Integer> options = super.options(cell);
+        options.removeAll(cell.cage().cells().stream().map(AbstractCell::value).collect(Collectors.toList()));
+        if (cell.value() != 0) options.add(cell.value());
+        return options;
+    }
+
 }

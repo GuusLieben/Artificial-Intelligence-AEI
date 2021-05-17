@@ -22,6 +22,10 @@ public class KillerCell extends Cell {
         this.cage.cells(cage);
     }
 
+    public Cage cage() {
+        return this.cage;
+    }
+
     @Override
     public boolean valid() {
         return this.validCage() && super.valid();
@@ -36,6 +40,4 @@ public class KillerCell extends Cell {
     public boolean isFinal() {
         return false;
     }
-
-
 }
