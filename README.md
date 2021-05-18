@@ -97,11 +97,9 @@ An example of a killer sudoku is the following:
 This can be solved as:
 ![solution_sudoku](https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Killersudoku_color_solution.svg/1024px-Killersudoku_color_solution.svg.png)
 
-The solution provided in this repository uses backtracking to validate all options until a match is found. If no match is found, the solver first tries other combinations.
+The baseline solution provided in this repository uses backtracking to validate all options until a match is found. If no match is found, the solver first tries other combinations.
 For the example above, this results in the solution below, which matches the expected solution above.
 ```bash
-Solved: true (took 450ms)
-
  ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ 
  ║ 2 │ 1 │ 5 ║ 6 │ 4 │ 7 ║ 3 │ 9 │ 8 ║ 
  ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
@@ -148,4 +146,126 @@ f=15
 g=25
 h=17
 ...
+```
+
+#### Improving results
+The baseline solution takes approximately 700ms to solve the above killer sudoku, with a total of 3,042,963 attempts. Each attempt indicating a single cell change. The improved, or optimised, solution expands
+on the backtracking functionality of the baseline solution by using a constraint satisfaction problem (CSP) method. 
+
+##### Constraint Satisfaction Problem
+The first step to doing this is to avoid any attempts from being made if we already 
+know a certain value will not be allowed. To do so each cell is first evaluated before an attempt is made, generating a list of potentially valid values. This is done by resolving any numbers already
+present in the current row, column, block, and (in case of a killer sudoku) cage. This way if the number 4 is already present in one of these elements, a default constraint is that our value cannot also be 4,
+allowing us to skip it so it will not be evaluated.
+
+##### Forward checking
+A second action taken is removing any values which would cause the next cell to have no remaining options left. Imagine a scenario where the current cell has the options `[1,2]` while the next cell only has the option `[2]`.
+We can predict that if we change the current cell value to `2`, the next cell will fail causing the need to backtrack. When this happens we can eliminate the `2` from the options for the current cell, making it so the value is `1`.
+
+##### Informed search
+Before the sudoku is attempted to be solved, each cell is assigned a set of possible values. Early on this will eliminate any values which cannot be present in the cell. For example because of final values in
+a row, column, or block, or the value being higher than the expected sum of a cage.
+
+##### Improved results
+The above improvements have been performed against three different sudoku's: 
+1. A completely empty sudoku without further constraints
+2. A regular sudoku, with the below pattern:
+```bash
+0,0,0,9,2,0,0,0,4
+0,7,0,0,0,0,8,5,0
+0,0,0,6,0,5,0,0,0
+4,0,0,8,0,0,3,0,5
+5,0,0,0,0,0,0,0,1
+2,0,7,0,0,1,0,0,6
+0,0,0,4,0,8,0,0,0
+0,3,0,0,0,0,0,4,0
+6,0,0,0,1,3,0,0,0
+```
+3. A killer sudoku, with the pattern matching the before mentioned sudoku definition
+
+The results are detailed below, showing the solution of both methods (if they are the same only one is shown) and the results of the baseline and optimised methods. Each result includes the time and attempts for both methods, 
+with the last line indicating the improvement of the amount of attempts. This improvement is indicated as a percentage and is calculated as follows:
+```bash
+-(((optimised - baseline) / baseline) * 100)
+```
+
+###### Empty sudoku
+```bash
+ ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ 
+ ║ 1 │ 2 │ 3 ║ 4 │ 5 │ 6 ║ 7 │ 8 │ 9 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 4 │ 5 │ 6 ║ 7 │ 8 │ 9 ║ 1 │ 2 │ 3 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 7 │ 8 │ 9 ║ 1 │ 2 │ 3 ║ 4 │ 5 │ 6 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 2 │ 1 │ 4 ║ 3 │ 6 │ 5 ║ 8 │ 9 │ 7 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 3 │ 6 │ 5 ║ 8 │ 9 │ 7 ║ 2 │ 1 │ 4 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 8 │ 9 │ 7 ║ 2 │ 1 │ 4 ║ 3 │ 6 │ 5 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 5 │ 3 │ 1 ║ 6 │ 4 │ 2 ║ 9 │ 7 │ 8 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 6 │ 4 │ 2 ║ 9 │ 7 │ 8 ║ 5 │ 3 │ 1 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 9 │ 7 │ 8 ║ 5 │ 3 │ 1 ║ 6 │ 4 │ 2 ║ 
+ ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ 
+Results:
+- Not optimised: 0s 12ms and 3,195 attempts
+- Optimised: 0s 9ms and 611 attempts
+- Improvement: 80.88%
+```
+
+###### Regular sudoku
+```bash
+ ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ 
+ ║ 1 │ 5 │ 8 ║ 9 │ 2 │ 7 ║ 6 │ 3 │ 4 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 9 │ 7 │ 6 ║ 1 │ 3 │ 4 ║ 8 │ 5 │ 2 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 3 │ 2 │ 4 ║ 6 │ 8 │ 5 ║ 7 │ 1 │ 9 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 4 │ 6 │ 1 ║ 8 │ 7 │ 9 ║ 3 │ 2 │ 5 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 5 │ 8 │ 3 ║ 2 │ 4 │ 6 ║ 9 │ 7 │ 1 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 2 │ 9 │ 7 ║ 3 │ 5 │ 1 ║ 4 │ 8 │ 6 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 7 │ 1 │ 2 ║ 4 │ 9 │ 8 ║ 5 │ 6 │ 3 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 8 │ 3 │ 9 ║ 5 │ 6 │ 2 ║ 1 │ 4 │ 7 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 6 │ 4 │ 5 ║ 7 │ 1 │ 3 ║ 2 │ 9 │ 8 ║ 
+ ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ 
+Results:
+- Not optimised: 0s 7ms and 6,579 attempts
+- Optimised: 0s 5ms and 911 attempts
+- Improvement: 86.15%
+```
+
+###### Killer sudoku
+```bash
+ ╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗ 
+ ║ 2 │ 1 │ 5 ║ 6 │ 4 │ 7 ║ 3 │ 9 │ 8 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 3 │ 6 │ 8 ║ 9 │ 5 │ 2 ║ 1 │ 7 │ 4 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 7 │ 9 │ 4 ║ 3 │ 8 │ 1 ║ 6 │ 5 │ 2 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 5 │ 8 │ 6 ║ 2 │ 7 │ 4 ║ 9 │ 3 │ 1 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 1 │ 4 │ 2 ║ 5 │ 9 │ 3 ║ 8 │ 6 │ 7 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 9 │ 7 │ 3 ║ 8 │ 1 │ 6 ║ 4 │ 2 │ 5 ║ 
+ ╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣ 
+ ║ 8 │ 2 │ 1 ║ 7 │ 3 │ 9 ║ 5 │ 4 │ 6 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 6 │ 5 │ 9 ║ 4 │ 2 │ 8 ║ 7 │ 1 │ 3 ║ 
+ ╟───┼───┼───╫───┼───┼───╫───┼───┼───╢ 
+ ║ 4 │ 3 │ 7 ║ 1 │ 6 │ 5 ║ 2 │ 8 │ 9 ║ 
+ ╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝ 
+Results:
+- Not optimised: 0s 742ms and 3,042,963 attempts
+- Optimised: 0s 701ms and 1,272,935 attempts
+- Improvement: 58.17%
 ```
