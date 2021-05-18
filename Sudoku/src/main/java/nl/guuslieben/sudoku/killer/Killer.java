@@ -95,7 +95,6 @@ public class Killer extends AbstractSudoku<KillerCell> {
     public List<Integer> options(KillerCell cell) {
         List<Integer> options = super.options(cell);
         options.removeAll(cell.cage().cells().stream().map(AbstractCell::value).collect(Collectors.toList()));
-        if (cell.value() != 0) options.add(cell.value());
         return options;
     }
 
