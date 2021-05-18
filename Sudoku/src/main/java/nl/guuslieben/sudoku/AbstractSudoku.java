@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractSudoku<E extends AbstractCell> {
     protected static final String FILE_DELIMITER = ",";
+    protected static final Random random = new Random();
+    protected static final List<Integer> PASSES = Arrays.asList(1,2,3,4,5,6,7,8,9);
     
     private static final int ROW_SIZE = 9;
     private static final int ROW_COUNT = 9;
@@ -62,7 +64,7 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
 
         this.combosTried = 0;
         long start = System.currentTimeMillis();
-        this.isComplete = this.optimised ? this.solveOptimised(0) : this.solve(0);
+        this.isComplete = this.solve(0);
         this.timeToSolve = this.isComplete ? System.currentTimeMillis() - start : -1;
     }
     
@@ -76,8 +78,8 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
         if (s.isFinal()) {
             return this.solve(index + 1);
         } else {
-            // Attempt each number 1 - 9 for each square
-            for (int i = 1; i <= 9; i++) {
+            // Attempt each valid number, for unoptimised runs this is 0-9
+            for (int i : this.valid(s, index)) {
                 s.value(i);
                 this.addAttempt();
                 // If this is a valid value move on to the next square
@@ -94,52 +96,26 @@ public abstract class AbstractSudoku<E extends AbstractCell> {
         }
     }
 
-
-    Random random = new Random();
-
-    public boolean solveOptimised(int index) {
-        // Reached the last square on the board, check if puzzle complete
-        if (index == this.board().size()) {
-            return this.complete();
-        }
-        E s = this.board().get(index);
-        // Do not alter 'final' values
-        if (s.isFinal()) {
-            return this.solveOptimised(index + 1);
-        } else {
+    protected List<Integer> valid(E cell, int index) {
+        if (this.optimised) {
             // Ensure our current value is still possible according to the cell constraints
-            List<Integer> options = this.options(s);
-            List<Integer> valid = s.possibles().stream().filter(options::contains).collect(Collectors.toList());
+            List<Integer> options = this.options(cell);
 
             // Forward tracing, if the next cell can only contain 1 value we know we cannot hold that value
             if (index < this.board().size()-1) {
                 E next = this.board().get(index + 1);
                 List<Integer> noptions = this.options(next);
-                if (noptions.size() == 1) valid.removeAll(noptions);
+                if (noptions.size() == 1) options.removeAll(noptions);
             }
-
-            // Attempt each possible number for each square
-            for (int i : valid) {
-                s.value(i);
-                this.addAttempt();
-
-                // If this is a valid value move on to the next square
-                if (s.valid()) {
-                    boolean done = this.solveOptimised(index + 1);
-                    if (done) {
-                        return true;
-                    }
-                }
-            }
-            // When all attempts fail for this square, reset and return
-            s.value(0);
-            return false;
+            return options;
+        } else {
+            return new ArrayList<>(PASSES);
         }
     }
 
     public List<Integer> options(E cell) {
         if (cell.isFinal()) return new ArrayList<>();
-        List<Integer> options = new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
+        List<Integer> options = new ArrayList<>(PASSES);
         options.removeAll(cell.row().stream().map(AbstractCell::value).collect(Collectors.toList()));
         options.removeAll(cell.column().stream().map(AbstractCell::value).collect(Collectors.toList()));
         return options;
